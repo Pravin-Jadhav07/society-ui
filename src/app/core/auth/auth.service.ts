@@ -1,12 +1,19 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, catchError, of, shareReplay, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export type LoginResponse = {
   token: string;
   refreshToken: string;
   role: string;
+  fullName?: string;
+  societyName?: string;
+};
+
+type TokenPair = {
+  token: string;
+  refreshToken: string;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -15,6 +22,10 @@ export class AuthService {
   private readonly tokenKey = 'token';
   private readonly refreshKey = 'refreshToken';
   private readonly roleKey = 'role';
+  private readonly fullNameKey = 'fullName';
+  private readonly societyNameKey = 'societyName';
+
+  private refreshRequest$: Observable<TokenPair> | null = null;
 
   login(username: string, password: string) {
     return this.http
@@ -22,13 +33,7 @@ export class AuthService {
         username,
         password,
       })
-      .pipe(
-        tap((res) => {
-          localStorage.setItem(this.tokenKey, res.token);
-          localStorage.setItem(this.refreshKey, res.refreshToken);
-          localStorage.setItem(this.roleKey, res.role);
-        }),
-      );
+      .pipe(tap((res) => this.saveSession(res)));
   }
 
   register(body: {
@@ -48,12 +53,65 @@ export class AuthService {
     );
   }
 
+  /** Refresh access + refresh tokens. Shared if many 401s happen together. */
+  refreshSession(): Observable<TokenPair> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token'));
+    }
+
+    if (!this.refreshRequest$) {
+      this.refreshRequest$ = this.http
+        .post<TokenPair>(`${environment.apiUrl}/auth/refresh`, { refreshToken })
+        .pipe(
+          tap((res) => this.saveTokens(res.token, res.refreshToken)),
+          catchError((err) => {
+            this.clearSession();
+            return throwError(() => err);
+          }),
+          shareReplay(1),
+        );
+
+      this.refreshRequest$.subscribe({
+        error: () => {
+          this.refreshRequest$ = null;
+        },
+        complete: () => {
+          this.refreshRequest$ = null;
+        },
+      });
+    }
+
+    return this.refreshRequest$;
+  }
+
   isLoggedIn(): boolean {
-    return !!localStorage.getItem(this.tokenKey);
+    return !!this.getAccessToken();
+  }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
   }
 
   getRefreshToken(): string | null {
     return localStorage.getItem(this.refreshKey);
+  }
+
+  getFullName(): string {
+    return localStorage.getItem(this.fullNameKey) ?? '';
+  }
+
+  getSocietyName(): string {
+    return localStorage.getItem(this.societyNameKey) ?? 'Society';
+  }
+
+  /** Login role from backend, e.g. User | Admin */
+  getRole(): string {
+    return localStorage.getItem(this.roleKey) ?? '';
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'Admin';
   }
 
   /** Calls backend to revoke refresh token, then always clears local session. */
@@ -76,6 +134,8 @@ export class AuthService {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.refreshKey);
     localStorage.removeItem(this.roleKey);
+    localStorage.removeItem(this.fullNameKey);
+    localStorage.removeItem(this.societyNameKey);
   }
 
   errorMessage(error: unknown, fallback = 'Something went wrong'): string {
@@ -105,5 +165,21 @@ export class AuthService {
       }
     }
     return fallback;
+  }
+
+  private saveSession(res: LoginResponse): void {
+    this.saveTokens(res.token, res.refreshToken);
+    localStorage.setItem(this.roleKey, res.role);
+    if (res.fullName) {
+      localStorage.setItem(this.fullNameKey, res.fullName);
+    }
+    if (res.societyName) {
+      localStorage.setItem(this.societyNameKey, res.societyName);
+    }
+  }
+
+  private saveTokens(token: string, refreshToken: string): void {
+    localStorage.setItem(this.tokenKey, token);
+    localStorage.setItem(this.refreshKey, refreshToken);
   }
 }

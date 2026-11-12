@@ -12,6 +12,10 @@ export class HomePage {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
+  readonly societyName = this.auth.getSocietyName();
+  readonly fullName = this.auth.getFullName();
+  readonly role = this.auth.getRole();
+  readonly isAdmin = this.auth.isAdmin();
   readonly loggingOut = signal(false);
 
   logout(): void {

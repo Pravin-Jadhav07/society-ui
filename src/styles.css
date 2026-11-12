@@ -1,1 +1,79 @@
-/* You can add global styles to this file, and also import other style files */
+/* Ionic core */
+@import '@ionic/angular/css/core.css';
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/float-elements.css';
+@import '@ionic/angular/css/text-alignment.css';
+@import '@ionic/angular/css/text-transformation.css';
+@import '@ionic/angular/css/flex-utils.css';
+
+/* Soft Google-like theme */
+:root {
+  --ion-color-primary: #1a73e8;
+  --ion-color-primary-rgb: 26, 115, 232;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #1765cc;
+  --ion-color-primary-tint: #3181ea;
+
+  --ion-background-color: #f8f9fa;
+  --ion-text-color: #202124;
+  --ion-font-family: 'Google Sans', 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.login-content {
+  --background: #f8f9fa;
+}
+
+.login-wrap {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 4rem 1.25rem 2rem;
+}
+
+.brand {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #202124;
+  text-align: center;
+}
+
+.subtitle {
+  margin: 0.5rem 0 2rem;
+  text-align: center;
+  color: #5f6368;
+}
+
+.login-list {
+  background: transparent;
+  margin-bottom: 1rem;
+}
+
+.error {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+}
+
+.field-error {
+  display: block;
+  padding: 0.25rem 1rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.register-hint {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #5f6368;
+  font-size: 0.95rem;
+}

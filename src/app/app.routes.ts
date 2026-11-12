@@ -4,6 +4,7 @@ import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-passw
 import { LoginPage } from './features/auth/login/login.page';
 import { RegisterPage } from './features/auth/register/register.page';
 import { ResetPasswordPage } from './features/auth/reset-password/reset-password.page';
+import { AskSocietyPage } from './features/ask-society/ask-society.page';
 import { CommunityPage } from './features/community/community.page';
 import { HomePage } from './features/home/home.page';
 import { ProfilePage } from './features/profile/profile.page';
@@ -28,6 +29,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfilePage },
     ],
   },
+  { path: 'ask-society', component: AskSocietyPage, canActivate: [authGuard] },
   { path: 'home', redirectTo: 'tabs/home', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

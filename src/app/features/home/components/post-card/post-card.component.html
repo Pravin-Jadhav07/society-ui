@@ -1,0 +1,49 @@
+<article class="surface-card post-card">
+  <div class="post-card-top">
+    <div class="post-card-heading">
+      <span class="post-author">{{ authorLine() }}</span>
+      <span class="post-audience">{{ visibilityLabel() }}</span>
+    </div>
+
+    @if (post().mine) {
+      <ion-button
+        [id]="menuId()"
+        class="post-menu-btn"
+        fill="clear"
+        size="small"
+        aria-label="Post options"
+      >
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+
+      <ion-popover
+        [trigger]="menuId()"
+        triggerAction="click"
+        dismissOnSelect="true"
+        side="bottom"
+        alignment="end"
+        [cssClass]="'post-menu-popover'"
+      >
+        <ng-template>
+          <ion-content class="post-menu-content">
+            <ion-list lines="none" class="post-menu-list">
+              <ion-item button detail="false" (click)="onEdit()">
+                <ion-icon slot="start" name="create-outline"></ion-icon>
+                Edit
+              </ion-item>
+              <ion-item button detail="false" class="post-menu-danger" (click)="onDelete()">
+                <ion-icon slot="start" name="trash-outline"></ion-icon>
+                Delete
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    }
+  </div>
+
+  <p class="post-body">{{ post().body }}</p>
+  <time class="post-time" [attr.datetime]="post().createdAt">
+    {{ post().createdAt | date: 'd MMM, h:mm a' }}
+  </time>
+</article>

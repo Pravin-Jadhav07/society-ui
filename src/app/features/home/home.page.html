@@ -21,7 +21,13 @@
         <ion-row>
           @for (action of quickActions; track action.label) {
             <ion-col size="3">
-              <button type="button" class="action-tile" disabled>
+              <button
+                type="button"
+                class="action-tile"
+                [disabled]="!action.route"
+                [class.action-tile-active]="!!action.route"
+                (click)="onAction(action)"
+              >
                 <span class="action-icon-wrap">
                   <ion-icon [name]="action.icon"></ion-icon>
                 </span>
@@ -33,31 +39,57 @@
       </ion-grid>
     </section>
 
-    <section class="home-section card-section">
+    <section class="home-section">
       <div class="section-head">
         <h2>Updates</h2>
         <span class="section-link">View all</span>
       </div>
-      <p class="section-empty">You have no new updates</p>
-      <div class="update-row">
-        @for (item of updates; track item.label) {
-          <button type="button" class="update-chip" disabled>
-            <ion-icon [name]="item.icon"></ion-icon>
-            <span>{{ item.label }}</span>
-          </button>
-        }
+
+      <div class="surface-card updates-card">
+        <p class="section-empty section-empty--flush">You have no new updates</p>
+        <div class="update-row">
+          @for (item of updates; track item.label) {
+            <button type="button" class="update-chip" disabled>
+              <ion-icon [name]="item.icon"></ion-icon>
+              <span>{{ item.label }}</span>
+            </button>
+          }
+        </div>
       </div>
     </section>
 
-    <section class="home-section card-section">
+    <section class="home-section">
       <div class="section-head">
         <h2>Community posts</h2>
-        <ion-button size="small" fill="outline" disabled>
+        <ion-button size="small" fill="outline" (click)="openAskSociety()">
           <ion-icon slot="start" name="add-circle-outline"></ion-icon>
           New post
         </ion-button>
       </div>
-      <p class="section-empty">No posts yet. Structure only — coming soon.</p>
+
+      @if (postsLoading()) {
+        <div class="surface-card">
+          <p class="section-empty section-empty--flush">Loading posts…</p>
+        </div>
+      } @else if (postsError()) {
+        <div class="surface-card">
+          <p class="section-empty section-empty--flush">{{ postsError() }}</p>
+        </div>
+      } @else if (posts().length === 0) {
+        <div class="surface-card">
+          <p class="section-empty section-empty--flush">No posts yet. Be the first to ask.</p>
+        </div>
+      } @else {
+        <div class="post-feed">
+          @for (post of posts(); track post.id) {
+            <app-post-card
+              [post]="post"
+              (edit)="editPost($event)"
+              (remove)="deletePost($event)"
+            ></app-post-card>
+          }
+        </div>
+      }
     </section>
   </div>
 </ion-content>

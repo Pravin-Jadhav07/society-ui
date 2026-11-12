@@ -11,6 +11,7 @@ export type LoginResponse = {
   societyName?: string;
   wing?: string;
   flatNumber?: string;
+  residentType?: string;
 };
 
 export type ApiMessageResponse = {
@@ -33,6 +34,7 @@ export class AuthService {
   private readonly societyNameKey = 'societyName';
   private readonly wingKey = 'wing';
   private readonly flatNumberKey = 'flatNumber';
+  private readonly residentTypeKey = 'residentType';
 
   private refreshRequest$: Observable<TokenPair> | null = null;
 
@@ -141,6 +143,23 @@ export class AuthService {
     return localStorage.getItem(this.flatNumberKey) ?? '';
   }
 
+  getResidentType(): string {
+    return localStorage.getItem(this.residentTypeKey) ?? '';
+  }
+
+  /** Initials for avatar chip, e.g. PJ */
+  getInitials(): string {
+    const name = this.getFullName().trim();
+    if (!name) {
+      return '?';
+    }
+    const parts = name.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) {
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
   /** Header left: "A · 101" from login wing + flatNumber */
   getFlatLabel(): string {
     const wing = this.getWing().trim();
@@ -190,6 +209,7 @@ export class AuthService {
     localStorage.removeItem(this.societyNameKey);
     localStorage.removeItem(this.wingKey);
     localStorage.removeItem(this.flatNumberKey);
+    localStorage.removeItem(this.residentTypeKey);
   }
 
   errorMessage(error: unknown, fallback = 'Something went wrong'): string {
@@ -235,6 +255,9 @@ export class AuthService {
     }
     if (res.flatNumber) {
       localStorage.setItem(this.flatNumberKey, res.flatNumber);
+    }
+    if (res.residentType) {
+      localStorage.setItem(this.residentTypeKey, res.residentType);
     }
   }
 

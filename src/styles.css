@@ -279,7 +279,8 @@ body {
   margin-bottom: 16px;
 }
 
-.card-section {
+.card-section,
+.surface-card {
   background: var(--app-surface);
   border-radius: var(--app-radius-card);
   padding: 14px 14px 16px;
@@ -291,7 +292,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .section-head h2 {
@@ -309,6 +310,14 @@ body {
   margin: 0 0 12px;
   font-size: 0.9rem;
   color: var(--app-text-secondary);
+}
+
+.section-empty--flush {
+  margin-bottom: 0;
+}
+
+.updates-card .section-empty--flush {
+  margin-bottom: 10px;
 }
 
 .action-grid {
@@ -399,4 +408,317 @@ body {
 .placeholder-row ion-icon {
   font-size: 1.25rem;
   color: var(--ion-color-primary);
+}
+
+.action-tile-active {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.action-tile:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* =============================================================================
+   Ask Society compose
+   ============================================================================= */
+.ask-header ion-toolbar {
+  --background: var(--app-surface);
+  --border-width: 0 0 1px 0;
+  --border-color: var(--app-border, #e8eaed);
+  --min-height: 56px;
+  --padding-start: 4px;
+  --padding-end: 4px;
+}
+
+.ask-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--app-text);
+  text-align: center;
+}
+
+.guidelines-btn {
+  --color: var(--ion-color-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.ask-content {
+  --background: var(--app-bg);
+}
+
+.ask-wrap {
+  padding: 16px 16px 88px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.ask-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ask-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--app-primary-soft);
+  color: var(--ion-color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ask-author-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.ask-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+.ask-flat {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--app-text-secondary);
+}
+
+.ask-audience {
+  max-width: 148px;
+  min-height: 32px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  --padding-start: 10px;
+  --padding-end: 6px;
+  --placeholder-color: var(--app-text);
+  --placeholder-opacity: 1;
+  color: var(--app-text);
+  background: var(--app-surface-muted);
+  border-radius: 999px;
+}
+
+.ask-audience::part(icon) {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-inline-start: 2px;
+}
+
+/* Teleported to body — keep compact, not full-width */
+.ask-audience-popover {
+  --width: fit-content;
+  --min-width: 148px;
+  --max-width: 180px;
+  --box-shadow: 0 8px 24px rgba(32, 33, 36, 0.16);
+  --backdrop-opacity: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ask-audience-popover ion-list {
+  margin: 0;
+  padding: 4px 0;
+  background: var(--app-surface);
+}
+
+.ask-audience-popover ion-radio {
+  margin: 0;
+  width: 100%;
+}
+
+.ask-audience-popover ion-item {
+  --min-height: 40px;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  --background: transparent;
+  --background-hover: var(--app-surface-muted);
+  --background-activated: var(--app-primary-soft);
+  --color: var(--app-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.ask-audience-popover .item-radio-checked {
+  --color: var(--ion-color-primary);
+  font-weight: 600;
+}
+
+.ask-textarea {
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  font-size: 1.05rem;
+  min-height: 160px;
+}
+
+.ask-field-error {
+  margin-top: 4px;
+}
+
+.ask-toolbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  background: var(--app-surface);
+  border-top: 1px solid var(--app-border, #e8eaed);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.ask-media {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ask-media ion-button {
+  --color: var(--app-text-muted);
+  margin: 0;
+}
+
+.ask-media ion-button[disabled] {
+  opacity: 0.4;
+}
+
+.ask-post-btn {
+  --background: var(--ion-color-primary);
+  --color: #fff;
+  --border-radius: 999px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin: 0;
+  font-weight: 600;
+  text-transform: none;
+  min-width: 96px;
+}
+
+.ask-post-btn[disabled] {
+  opacity: 0.45;
+}
+
+/* =============================================================================
+   Community post feed
+   ============================================================================= */
+.post-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.post-card {
+  position: relative;
+}
+
+.post-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.post-card-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.post-menu-btn {
+  margin: -6px -8px 0 0;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  --color: var(--app-text-muted);
+  height: 32px;
+  width: 32px;
+}
+
+.post-author {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+.post-audience {
+  font-size: 0.75rem;
+  color: var(--app-text-muted);
+}
+
+.post-body {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--app-text);
+  white-space: pre-wrap;
+}
+
+.post-time {
+  font-size: 0.75rem;
+  color: var(--app-text-muted);
+}
+
+.post-menu-popover {
+  --width: 160px;
+  --box-shadow: 0 8px 24px rgba(32, 33, 36, 0.16);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.post-menu-content {
+  --background: var(--app-surface);
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+.post-menu-list {
+  margin: 0;
+  padding: 4px 0;
+  background: var(--app-surface);
+}
+
+.post-menu-list ion-item {
+  --min-height: 42px;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  --background: transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.post-menu-list ion-icon {
+  font-size: 1.05rem;
+  margin-inline-end: 8px;
+  color: var(--app-text-muted);
+}
+
+.post-menu-danger {
+  --color: var(--ion-color-danger);
+}
+
+.post-menu-danger ion-icon {
+  color: var(--ion-color-danger);
 }

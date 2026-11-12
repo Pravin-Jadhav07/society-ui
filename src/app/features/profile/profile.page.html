@@ -1,18 +1,14 @@
-<app-header
-  [flatLabel]="flatLabel"
-  [subtitle]="societyName"
-  (profileClick)="openProfile()"
-></app-header>
+<app-header (profileClick)="openProfile()"></app-header>
 
 <ion-content class="page-content">
   <div class="page-wrap page-wrap--narrow">
     <ion-text>
       <h1>Profile</h1>
-      @if (fullName) {
-        <p>{{ fullName }}</p>
+      @if (fullName()) {
+        <p>{{ fullName() }}</p>
       }
-      @if (role) {
-        <p class="muted">Role: {{ role }}</p>
+      @if (role()) {
+        <p class="muted">Role: {{ role() }}</p>
       }
       <p class="muted">Settings and personal details — later.</p>
     </ion-text>

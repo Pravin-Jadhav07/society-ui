@@ -13,11 +13,15 @@ export class ProfilePage {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  readonly flatLabel = this.auth.getFlatLabel();
-  readonly societyName = this.auth.getSocietyName();
-  readonly fullName = this.auth.getFullName();
-  readonly role = this.auth.getRole();
   readonly loggingOut = signal(false);
+
+  fullName(): string {
+    return this.auth.getFullName();
+  }
+
+  role(): string {
+    return this.auth.getRole();
+  }
 
   openProfile(): void {
     // already on profile

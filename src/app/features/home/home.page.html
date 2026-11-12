@@ -1,14 +1,10 @@
-<app-header
-  [flatLabel]="flatLabel"
-  [subtitle]="societyName"
-  (profileClick)="openProfile()"
-></app-header>
+<app-header (profileClick)="openProfile()"></app-header>
 
 <ion-content class="home-content">
   <div class="home-scroll">
     <section class="home-welcome">
       <ion-text>
-        <h1>Welcome{{ fullName ? ', ' + fullName : '' }}</h1>
+        <h1>Welcome{{ welcomeName() }}</h1>
         <p>Your society home — more coming soon.</p>
       </ion-text>
     </section>
@@ -19,7 +15,7 @@
       </div>
       <ion-grid class="action-grid">
         <ion-row>
-          @for (action of quickActions; track action.label) {
+          @for (action of quickActions(); track action.label) {
             <ion-col size="3">
               <button
                 type="button"
@@ -41,21 +37,44 @@
 
     <section class="home-section">
       <div class="section-head">
-        <h2>Updates</h2>
-        <span class="section-link">View all</span>
-      </div>
-
-      <div class="surface-card updates-card">
-        <p class="section-empty section-empty--flush">You have no new updates</p>
-        <div class="update-row">
-          @for (item of updates; track item.label) {
-            <button type="button" class="update-chip" disabled>
-              <ion-icon [name]="item.icon"></ion-icon>
-              <span>{{ item.label }}</span>
-            </button>
-          }
+        <h2>Today's Updates</h2>
+        <div class="day-filter">
+          <button type="button" [class.day-filter-active]="updateDay() === 'today'" (click)="setUpdateDay('today')">Today</button>
+          <button type="button" [class.day-filter-active]="updateDay() === 'yesterday'" (click)="setUpdateDay('yesterday')">Yesterday</button>
         </div>
       </div>
+
+      @if (updatesLoading()) {
+        <div class="surface-card">
+          <p class="section-empty section-empty--flush">Loading updates…</p>
+        </div>
+      } @else if (updatesError()) {
+        <div class="surface-card">
+          <p class="section-empty section-empty--flush">{{ updatesError() }}</p>
+        </div>
+      } @else if (updates().length === 0) {
+        <div class="surface-card updates-card">
+          <p class="section-empty section-empty--flush">No updates</p>
+          <div class="update-row">
+            @for (item of updateShortcuts; track item.label) {
+              <button type="button" class="update-chip" disabled>
+                <ion-icon [name]="item.icon"></ion-icon>
+                <span>{{ item.label }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="update-feed">
+          @for (entry of updates(); track entry.id) {
+            <app-update-card
+              [entry]="entry"
+              (edit)="editPreApproval($event)"
+              (cancel)="cancelPreApproval($event)"
+            ></app-update-card>
+          }
+        </div>
+      }
     </section>
 
     <section class="home-section">

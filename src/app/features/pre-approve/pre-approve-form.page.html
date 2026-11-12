@@ -1,0 +1,131 @@
+<ion-header class="ask-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" aria-label="Back" (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <h1 class="ask-title">{{ pageTitle() }}</h1>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ask-content">
+  <form class="pre-wrap" [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list class="login-list pre-form-list" lines="full">
+      <ion-item>
+        <ion-input
+          label="Day"
+          labelPlacement="stacked"
+          type="date"
+          formControlName="visitDate"
+          [min]="minDay()"
+          (ionChange)="onVisitDateChange()"
+          (ionBlur)="onVisitDateChange()"
+        ></ion-input>
+      </ion-item>
+      @if (fieldError('visitDate')) {
+        <ion-note class="field-error">{{ fieldError('visitDate') }}</ion-note>
+      }
+
+      <ion-item
+        id="entry-time-trigger"
+        button
+        detail="false"
+        class="entry-time-item"
+        (click)="prepareTimePicker()"
+      >
+        <div class="entry-time-field">
+          <span class="entry-time-label">Approx entry time</span>
+          <span class="entry-time-value" [class.entry-time-placeholder]="!timeDisplay()">
+            {{ timeDisplay() || 'Select time' }}
+          </span>
+        </div>
+      </ion-item>
+      <ion-popover
+        trigger="entry-time-trigger"
+        triggerAction="click"
+        side="bottom"
+        alignment="start"
+        [cssClass]="'entry-time-popover'"
+        [keepContentsMounted]="true"
+      >
+        <ng-template>
+          <ion-datetime
+            presentation="time"
+            [preferWheel]="true"
+            hourCycle="h12"
+            [showDefaultButtons]="true"
+            doneText="Done"
+            cancelText="Cancel"
+            [min]="entryTimeMin()"
+            [value]="timePickerValue()"
+            (ionChange)="onTimeChange($event)"
+          ></ion-datetime>
+        </ng-template>
+      </ion-popover>
+      @if (fieldError('approxEntryTime')) {
+        <ion-note class="field-error">{{ fieldError('approxEntryTime') }}</ion-note>
+      }
+
+      <ion-item>
+        <ion-input
+          [label]="isGuest() ? 'Guest name' : 'Name'"
+          labelPlacement="stacked"
+          type="text"
+          formControlName="name"
+          autocomplete="name"
+          (ionBlur)="form.controls.name.markAsTouched(); formTick.update((n) => n + 1)"
+        ></ion-input>
+      </ion-item>
+      @if (fieldError('name')) {
+        <ion-note class="field-error">{{ fieldError('name') }}</ion-note>
+      }
+
+      @if (isGuest()) {
+        <ion-item>
+          <ion-input
+            label="Mobile number"
+            labelPlacement="stacked"
+            type="tel"
+            inputmode="numeric"
+            maxlength="10"
+            formControlName="mobileNumber"
+            (ionBlur)="form.controls.mobileNumber.markAsTouched(); formTick.update((n) => n + 1)"
+          ></ion-input>
+        </ion-item>
+        @if (fieldError('mobileNumber')) {
+          <ion-note class="field-error">{{ fieldError('mobileNumber') }}</ion-note>
+        }
+      } @else {
+        <ion-item>
+          <ion-input
+            label="Vehicle no. (last 4 digits)"
+            labelPlacement="stacked"
+            type="tel"
+            inputmode="numeric"
+            maxlength="4"
+            formControlName="vehicleLast4"
+            (ionBlur)="form.controls.vehicleLast4.markAsTouched(); formTick.update((n) => n + 1)"
+          ></ion-input>
+        </ion-item>
+        @if (fieldError('vehicleLast4')) {
+          <ion-note class="field-error">{{ fieldError('vehicleLast4') }}</ion-note>
+        }
+      }
+    </ion-list>
+
+    @if (error()) {
+      <ion-text color="danger">
+        <p class="error">{{ error() }}</p>
+      </ion-text>
+    }
+
+    <ion-button expand="block" type="submit" [disabled]="!canSave()">
+      @if (loading()) {
+        <ion-spinner name="crescent"></ion-spinner>
+      } @else {
+        {{ editId() ? 'Save changes' : 'Pre-Approve' }}
+      }
+    </ion-button>
+  </form>
+</ion-content>

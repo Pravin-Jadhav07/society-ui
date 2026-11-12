@@ -20,10 +20,10 @@
 <ion-content class="ask-content">
   <form class="ask-wrap" [formGroup]="form" (ngSubmit)="submit()">
     <div class="ask-author">
-      <div class="ask-avatar" aria-hidden="true">{{ initials }}</div>
+      <div class="ask-avatar" aria-hidden="true">{{ initials() }}</div>
       <div class="ask-author-meta">
-        <p class="ask-name">{{ fullName || 'Resident' }}</p>
-        <p class="ask-flat">{{ flatLabel }}</p>
+        <p class="ask-name">{{ fullName() }}</p>
+        <p class="ask-flat">{{ flatLabel() }}</p>
       </div>
 
       <ion-select

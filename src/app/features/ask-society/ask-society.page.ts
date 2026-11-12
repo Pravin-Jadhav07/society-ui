@@ -62,9 +62,17 @@ export class AskSocietyPage implements ViewWillEnter {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  readonly fullName = this.auth.getFullName();
-  readonly flatLabel = this.auth.getFlatLabel();
-  readonly initials = this.auth.getInitials();
+  fullName(): string {
+    return this.auth.getFullName();
+  }
+
+  flatLabel(): string {
+    return this.auth.getFlatLabel();
+  }
+
+  initials(): string {
+    return this.auth.getInitials();
+  }
 
   readonly audiencePopoverOptions = {
     cssClass: 'ask-audience-popover',

@@ -1,0 +1,35 @@
+<ion-header class="ask-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" aria-label="Back" (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <h1 class="ask-title">Pre-Approve</h1>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ask-content">
+  <div class="pre-wrap">
+    <p class="pre-lead">Who are you expecting at the gate?</p>
+
+    <div class="pre-category-list">
+      @for (category of categories; track category.type) {
+        <button
+          type="button"
+          class="surface-card pre-category"
+          [disabled]="category.disabled"
+          (click)="openCategory(category)"
+        >
+          <span class="pre-category-icon">
+            <ion-icon [name]="category.icon"></ion-icon>
+          </span>
+          <span class="pre-category-text">
+            <span class="pre-category-title">{{ category.title }}</span>
+            <span class="pre-category-sub">{{ category.subtitle }}</span>
+          </span>
+        </button>
+      }
+    </div>
+  </div>
+</ion-content>

@@ -132,7 +132,7 @@ export class AuthService {
   }
 
   getSocietyName(): string {
-    return localStorage.getItem(this.societyNameKey) ?? 'Society';
+    return localStorage.getItem(this.societyNameKey) ?? '';
   }
 
   getWing(): string {
@@ -160,20 +160,11 @@ export class AuthService {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
-  /** Header left: "A · 101" from login wing + flatNumber */
+  /** Header left: wing and flat from the logged-in user, including flat "0". */
   getFlatLabel(): string {
     const wing = this.getWing().trim();
     const flat = this.getFlatNumber().trim();
-    if (wing && flat) {
-      return `${wing} · ${flat}`;
-    }
-    if (wing) {
-      return wing;
-    }
-    if (flat) {
-      return flat;
-    }
-    return '—';
+    return [wing, flat].filter((part) => part.length > 0).join(' · ');
   }
 
   /** Login role from backend, e.g. User | Admin */
@@ -183,6 +174,10 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getRole() === 'Admin';
+  }
+
+  isSecurity(): boolean {
+    return this.getRole() === 'Security';
   }
 
   /** Calls backend to revoke refresh token, then always clears local session. */
@@ -243,22 +238,21 @@ export class AuthService {
 
   private saveSession(res: LoginResponse): void {
     this.saveTokens(res.token, res.refreshToken);
-    localStorage.setItem(this.roleKey, res.role);
-    if (res.fullName) {
-      localStorage.setItem(this.fullNameKey, res.fullName);
+    this.writeProfile(this.roleKey, res.role);
+    this.writeProfile(this.fullNameKey, res.fullName);
+    this.writeProfile(this.societyNameKey, res.societyName);
+    this.writeProfile(this.wingKey, res.wing);
+    this.writeProfile(this.flatNumberKey, res.flatNumber);
+    this.writeProfile(this.residentTypeKey, res.residentType);
+  }
+
+  private writeProfile(key: string, value: string | undefined): void {
+    const text = value == null ? '' : String(value).trim();
+    if (text.length > 0) {
+      localStorage.setItem(key, text);
+      return;
     }
-    if (res.societyName) {
-      localStorage.setItem(this.societyNameKey, res.societyName);
-    }
-    if (res.wing) {
-      localStorage.setItem(this.wingKey, res.wing);
-    }
-    if (res.flatNumber) {
-      localStorage.setItem(this.flatNumberKey, res.flatNumber);
-    }
-    if (res.residentType) {
-      localStorage.setItem(this.residentTypeKey, res.residentType);
-    }
+    localStorage.removeItem(key);
   }
 
   private saveTokens(token: string, refreshToken: string): void {

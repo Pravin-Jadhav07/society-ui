@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import {
   AlertController,
@@ -12,9 +13,15 @@ import {
   ViewWillEnter,
 } from '@ionic/angular';
 import { AuthService } from '../../core/auth/auth.service';
+import { HomeRefresh } from '../../core/home/home-refresh';
 import { PostService, SocietyPost } from '../../core/posts/post.service';
+import {
+  PreApproval,
+  PreApprovalService,
+} from '../../core/pre-approvals/pre-approval.service';
 import { AppHeaderComponent } from '../../layout/app-header/app-header.component';
 import { PostCardComponent } from './components/post-card/post-card.component';
+import { UpdateCardComponent } from './components/update-card/update-card.component';
 
 type QuickAction = {
   label: string;
@@ -33,6 +40,7 @@ type UpdateItem = {
   imports: [
     AppHeaderComponent,
     PostCardComponent,
+    UpdateCardComponent,
     IonContent,
     IonText,
     IonGrid,
@@ -45,21 +53,19 @@ type UpdateItem = {
 export class HomePage implements ViewWillEnter {
   private readonly auth = inject(AuthService);
   private readonly postsApi = inject(PostService);
+  private readonly preApprovalsApi = inject(PreApprovalService);
   private readonly router = inject(Router);
   private readonly alerts = inject(AlertController);
+  private readonly homeRefresh = inject(HomeRefresh);
+  private readonly content = viewChild(IonContent);
 
-  readonly flatLabel = this.auth.getFlatLabel();
-  readonly societyName = this.auth.getSocietyName();
-  readonly fullName = this.auth.getFullName();
+  constructor() {
+    this.homeRefresh.reloads$.pipe(takeUntilDestroyed()).subscribe(() => this.reloadHome());
+  }
 
-  readonly quickActions: QuickAction[] = [
-    { label: 'Security', icon: 'shield-checkmark-outline' },
-    { label: 'Ask Society', icon: 'chatbox-ellipses-outline', route: '/ask-society' },
-    { label: 'Post', icon: 'create-outline' },
-    { label: 'View more', icon: 'grid-outline' },
-  ];
+  readonly quickActions = signal<QuickAction[]>([]);
 
-  readonly updates: UpdateItem[] = [
+  readonly updateShortcuts: UpdateItem[] = [
     { label: 'Daily Help', icon: 'hand-left-outline' },
     { label: 'Gatepass', icon: 'key-outline' },
   ];
@@ -68,8 +74,25 @@ export class HomePage implements ViewWillEnter {
   readonly postsError = signal('');
   readonly postsLoading = signal(false);
 
+  readonly updates = signal<PreApproval[]>([]);
+  readonly updateDay = signal<'today' | 'yesterday'>('today');
+  readonly updatesError = signal('');
+  readonly updatesLoading = signal(false);
+
+  welcomeName(): string {
+    const name = this.auth.getFullName().trim();
+    return name.length > 0 ? `, ${name}` : '';
+  }
+
   ionViewWillEnter(): void {
+    this.reloadHome();
+  }
+
+  private reloadHome(): void {
+    void this.content()?.scrollToTop(200);
+    this.quickActions.set(this.buildQuickActions());
     this.loadPosts();
+    this.loadPreApprovals();
   }
 
   openProfile(): void {
@@ -85,6 +108,22 @@ export class HomePage implements ViewWillEnter {
 
   openAskSociety(): void {
     void this.router.navigateByUrl('/ask-society');
+  }
+
+  private buildQuickActions(): QuickAction[] {
+    const security: QuickAction = { label: 'Security', icon: 'body-outline', route: '/security' };
+
+    const preApprove: QuickAction = this.auth.isSecurity()
+      ? { label: 'Pre-Approve', icon: 'checkmark-circle-outline' }
+      : { label: 'Pre-Approve', icon: 'checkmark-circle-outline', route: '/pre-approve' };
+
+    return [
+      security,
+      preApprove,
+      { label: 'Ask Society', icon: 'chatbox-ellipses-outline', route: '/ask-society' },
+      { label: 'Post', icon: 'create-outline' },
+      { label: 'View more', icon: 'grid-outline' },
+    ];
   }
 
   editPost(post: SocietyPost): void {
@@ -120,6 +159,40 @@ export class HomePage implements ViewWillEnter {
     await alert.present();
   }
 
+  editPreApproval(entry: PreApproval): void {
+    const path = entry.type === 'VEHICLE' ? 'vehicle' : 'guest';
+    void this.router.navigate(['/pre-approve', path], {
+      queryParams: { edit: entry.id },
+    });
+  }
+
+  async cancelPreApproval(entry: PreApproval): Promise<void> {
+    const alert = await this.alerts.create({
+      header: 'Cancel entry?',
+      message: 'This pre-approval will be removed.',
+      buttons: [
+        { text: 'Keep', role: 'cancel' },
+        {
+          text: 'Cancel entry',
+          role: 'destructive',
+          handler: () => {
+            this.preApprovalsApi.cancel(entry.id).subscribe({
+              next: () => {
+                this.updates.update((list) => list.filter((item) => item.id !== entry.id));
+              },
+              error: (err) => {
+                this.updatesError.set(
+                  this.auth.errorMessage(err, 'Unable to cancel entry'),
+                );
+              },
+            });
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
   private loadPosts(): void {
     this.postsLoading.set(true);
     this.postsError.set('');
@@ -131,6 +204,35 @@ export class HomePage implements ViewWillEnter {
       error: (err) => {
         this.postsLoading.set(false);
         this.postsError.set(this.auth.errorMessage(err, 'Unable to load posts'));
+      },
+    });
+  }
+
+  setUpdateDay(day: 'today' | 'yesterday'): void {
+    if (this.updateDay() === day) {
+      return;
+    }
+    this.updateDay.set(day);
+    this.loadPreApprovals();
+  }
+
+  private loadPreApprovals(): void {
+    this.updatesLoading.set(true);
+    this.updatesError.set('');
+    const day = this.updateDay();
+    const request$ = this.auth.isSecurity()
+      ? this.preApprovalsApi.listGate(day)
+      : this.preApprovalsApi.listMine(day);
+    request$.subscribe({
+      next: (list) => {
+        this.updates.set(list ?? []);
+        this.updatesLoading.set(false);
+      },
+      error: (err) => {
+        this.updatesLoading.set(false);
+        this.updatesError.set(
+          this.auth.errorMessage(err, 'Unable to load updates'),
+        );
       },
     });
   }

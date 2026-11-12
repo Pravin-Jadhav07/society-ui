@@ -7,7 +7,10 @@ import { ResetPasswordPage } from './features/auth/reset-password/reset-password
 import { AskSocietyPage } from './features/ask-society/ask-society.page';
 import { CommunityPage } from './features/community/community.page';
 import { HomePage } from './features/home/home.page';
+import { PreApproveFormPage } from './features/pre-approve/pre-approve-form.page';
+import { PreApprovePage } from './features/pre-approve/pre-approve.page';
 import { ProfilePage } from './features/profile/profile.page';
+import { SecurityPage } from './features/security/security.page';
 import { SocialPage } from './features/social/social.page';
 import { TabsPage } from './layout/tabs/tabs.page';
 
@@ -30,6 +33,13 @@ export const routes: Routes = [
     ],
   },
   { path: 'ask-society', component: AskSocietyPage, canActivate: [authGuard] },
+  { path: 'security', component: SecurityPage, canActivate: [authGuard] },
+  { path: 'pre-approve', component: PreApprovePage, canActivate: [authGuard] },
+  {
+    path: 'pre-approve/:type',
+    component: PreApproveFormPage,
+    canActivate: [authGuard],
+  },
   { path: 'home', redirectTo: 'tabs/home', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

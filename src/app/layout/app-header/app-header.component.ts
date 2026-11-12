@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import {
   IonButton,
   IonButtons,
@@ -6,6 +6,7 @@ import {
   IonIcon,
   IonToolbar,
 } from '@ionic/angular';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -13,8 +14,15 @@ import {
   imports: [IonHeader, IonToolbar, IonButtons, IonButton, IonIcon],
 })
 export class AppHeaderComponent {
-  /** Left title, e.g. wing + flat */
-  readonly flatLabel = input('—');
-  readonly subtitle = input('');
+  private readonly auth = inject(AuthService);
+
   readonly profileClick = output<void>();
+
+  flatLabel(): string {
+    return this.auth.getFlatLabel();
+  }
+
+  subtitle(): string {
+    return this.auth.getSocietyName();
+  }
 }

@@ -1,0 +1,76 @@
+<ion-header class="ask-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" aria-label="Back" (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <h1 class="ask-title">Security</h1>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ask-content">
+  <div class="pre-wrap">
+    @if (!pickingCall()) {
+      <p class="pre-lead">Reach security</p>
+      <div class="pre-category-list">
+        <button type="button" class="surface-card pre-category" (click)="openCallList()">
+          <span class="pre-category-icon">
+            <ion-icon name="call-outline"></ion-icon>
+          </span>
+          <span class="pre-category-text">
+            <span class="pre-category-title">Call</span>
+            <span class="pre-category-sub">Call one guard</span>
+          </span>
+        </button>
+        <button type="button" class="surface-card pre-category" disabled>
+          <span class="pre-category-icon">
+            <ion-icon name="chatbubble-outline"></ion-icon>
+          </span>
+          <span class="pre-category-text">
+            <span class="pre-category-title">Message</span>
+            <span class="pre-category-sub">Coming later</span>
+          </span>
+        </button>
+        <button type="button" class="surface-card pre-category" disabled>
+          <span class="pre-category-icon">
+            <ion-icon name="warning-outline"></ion-icon>
+          </span>
+          <span class="pre-category-text">
+            <span class="pre-category-title">Alert</span>
+            <span class="pre-category-sub">Coming later</span>
+          </span>
+        </button>
+      </div>
+    } @else {
+      <p class="pre-lead">Choose a guard</p>
+      @if (loading()) {
+        <div class="surface-card">
+          <p class="section-empty section-empty--flush">Loading…</p>
+        </div>
+      } @else if (guards().length === 0) {
+        <div class="surface-card">
+          <p class="section-empty section-empty--flush">No security guards yet</p>
+        </div>
+      } @else {
+        <div class="pre-category-list">
+          @for (guard of guards(); track guard.id) {
+            <button type="button" class="surface-card pre-category" (click)="call(guard)">
+              <span class="pre-category-icon">
+                <ion-icon name="call-outline"></ion-icon>
+              </span>
+              <span class="pre-category-text">
+                <span class="pre-category-title">{{ guard.fullName }}</span>
+                <span class="pre-category-sub">{{ guard.mobile }}</span>
+              </span>
+            </button>
+          }
+        </div>
+      }
+    }
+
+    @if (error()) {
+      <p class="section-empty">{{ error() }}</p>
+    }
+  </div>
+</ion-content>

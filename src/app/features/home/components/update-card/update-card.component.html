@@ -1,0 +1,57 @@
+<article class="surface-card update-entry-card">
+  <div class="post-card-top">
+    <div class="update-entry-heading">
+      <span class="update-entry-type">
+        <ion-icon [name]="typeIcon()"></ion-icon>
+        {{ typeLabel() }}
+      </span>
+      <span class="post-author">{{ entry().name }}</span>
+      <span class="post-audience">{{ detailLine() }}</span>
+      @if (entry().mine === false) {
+        <span class="post-audience">{{ flatLine() }}</span>
+      }
+    </div>
+
+    @if (entry().mine !== false) {
+      <ion-button
+        [id]="menuId()"
+        class="post-menu-btn"
+        fill="clear"
+        size="small"
+        aria-label="Update options"
+      >
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+
+      <ion-popover
+        [trigger]="menuId()"
+        triggerAction="click"
+        dismissOnSelect="true"
+        side="bottom"
+        alignment="end"
+        [cssClass]="'post-menu-popover'"
+      >
+        <ng-template>
+          <ion-content class="post-menu-content">
+            <ion-list lines="none" class="post-menu-list">
+              <ion-item button detail="false" (click)="onEdit()">
+                <ion-icon slot="start" name="create-outline"></ion-icon>
+                Edit
+              </ion-item>
+              <ion-item button detail="false" class="post-menu-danger" (click)="onCancel()">
+                <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+                Cancel
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    }
+  </div>
+
+  <p class="update-entry-when">
+    {{ entry().visitDate | date: 'd MMM y' }}
+    ·
+    {{ timeLabel() }}
+  </p>
+</article>

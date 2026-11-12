@@ -104,7 +104,7 @@ export class LoginPage {
     this.auth.login(username.trim(), password).subscribe({
       next: () => {
         this.loading.set(false);
-        void this.router.navigateByUrl('/home');
+        void this.router.navigateByUrl('/tabs/home');
       },
       error: (err) => {
         this.loading.set(false);

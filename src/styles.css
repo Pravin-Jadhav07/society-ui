@@ -10,8 +10,11 @@
 @import '@ionic/angular/css/text-transformation.css';
 @import '@ionic/angular/css/flex-utils.css';
 
-/* Soft Google-like theme */
+/* =============================================================================
+   Theme tokens (change here for light/dark later)
+   ============================================================================= */
 :root {
+  /* Ionic brand */
   --ion-color-primary: #1a73e8;
   --ion-color-primary-rgb: 26, 115, 232;
   --ion-color-primary-contrast: #ffffff;
@@ -19,9 +22,63 @@
   --ion-color-primary-shade: #1765cc;
   --ion-color-primary-tint: #3181ea;
 
-  --ion-background-color: #f8f9fa;
-  --ion-text-color: #202124;
   --ion-font-family: 'Google Sans', 'Roboto', 'Segoe UI', Arial, sans-serif;
+
+  /* App surfaces */
+  --app-bg: #f8f9fa;
+  --app-surface: #ffffff;
+  --app-surface-muted: #f1f3f4;
+  --app-primary-soft: #e8f0fe;
+
+  /* App text */
+  --app-text: #202124;
+  --app-text-secondary: #5f6368;
+  --app-text-muted: #3c4043;
+
+  /* Chrome */
+  --app-header-bg: var(--app-bg);
+  --app-tab-bg: var(--app-surface);
+  --app-tab-color: var(--app-text-secondary);
+  --app-tab-color-selected: var(--ion-color-primary);
+  --app-tab-shadow: 0 -1px 0 rgba(0, 0, 0, 0.06);
+  --app-card-shadow: 0 1px 2px rgba(60, 64, 67, 0.08);
+  --app-radius-card: 16px;
+  --app-radius-tile: 14px;
+  --app-radius-row: 12px;
+  --app-content-max: 560px;
+  --app-auth-max: 420px;
+
+  /* Wire Ionic to app tokens */
+  --ion-background-color: var(--app-bg);
+  --ion-text-color: var(--app-text);
+  --ion-toolbar-background: var(--app-header-bg);
+  --ion-tab-bar-background: var(--app-tab-bg);
+}
+
+/*
+  Dark theme — enable later via class on body/html, e.g. document.body.classList.add('theme-dark')
+  or prefers-color-scheme when product is ready.
+*/
+body.theme-dark {
+  --app-bg: #121212;
+  --app-surface: #1e1e1e;
+  --app-surface-muted: #2a2a2a;
+  --app-primary-soft: #1a3a5c;
+
+  --app-text: #e8eaed;
+  --app-text-secondary: #9aa0a6;
+  --app-text-muted: #bdc1c6;
+
+  --app-header-bg: var(--app-bg);
+  --app-tab-bg: var(--app-surface);
+  --app-tab-shadow: 0 -1px 0 rgba(255, 255, 255, 0.08);
+  --app-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+
+  --ion-color-primary: #8ab4f8;
+  --ion-color-primary-rgb: 138, 180, 248;
+  --ion-color-primary-contrast: #202124;
+  --ion-color-primary-shade: #799eea;
+  --ion-color-primary-tint: #96bcf9;
 }
 
 html,
@@ -30,12 +87,15 @@ body {
   margin: 0;
 }
 
+/* =============================================================================
+   Auth screens
+   ============================================================================= */
 .login-content {
-  --background: #f8f9fa;
+  --background: var(--app-bg);
 }
 
 .login-wrap {
-  max-width: 420px;
+  max-width: var(--app-auth-max);
   margin: 0 auto;
   padding: 4rem 1.25rem 2rem;
 }
@@ -45,14 +105,14 @@ body {
   font-size: 2rem;
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: #202124;
+  color: var(--app-text);
   text-align: center;
 }
 
 .subtitle {
   margin: 0.5rem 0 2rem;
   text-align: center;
-  color: #5f6368;
+  color: var(--app-text-secondary);
 }
 
 .login-list {
@@ -72,13 +132,9 @@ body {
   color: var(--ion-color-danger);
 }
 
-/*
-  Ionic paints stacked labels red when invalid.
-  Keep labels normal; only .field-error / ion-note stays red.
-*/
 .login-list ion-input,
 .login-list ion-select {
-  --highlight-color-invalid: #5f6368;
+  --highlight-color-invalid: var(--app-text-secondary);
 }
 
 .forgot-link {
@@ -87,7 +143,9 @@ body {
   font-size: 0.9rem;
 }
 
-.forgot-link a {
+.forgot-link a,
+.register-hint a,
+.section-link {
   color: var(--ion-color-primary);
   text-decoration: none;
   font-weight: 500;
@@ -96,14 +154,8 @@ body {
 .register-hint {
   margin-top: 1.5rem;
   text-align: center;
-  color: #5f6368;
+  color: var(--app-text-secondary);
   font-size: 0.95rem;
-}
-
-.register-hint a {
-  color: var(--ion-color-primary);
-  text-decoration: none;
-  font-weight: 500;
 }
 
 .register-wrap {
@@ -116,4 +168,235 @@ body {
   font-size: 0.95rem;
   line-height: 1.4;
   text-align: center;
+}
+
+/* =============================================================================
+   App shell — header + tabs
+   ============================================================================= */
+.app-header ion-toolbar {
+  --background: var(--app-header-bg);
+  --border-width: 0;
+  --padding-start: 12px;
+  --padding-end: 4px;
+  --color: var(--app-text);
+}
+
+.app-header .header-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-inline-start: 4px;
+  min-width: 0;
+}
+
+.app-header .flat-label {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--app-text);
+  line-height: 1.2;
+}
+
+.app-header .header-sub {
+  margin: 2px 0 0;
+  font-size: 0.75rem;
+  color: var(--app-text-secondary);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.app-header ion-button ion-icon {
+  font-size: 1.75rem;
+  color: var(--app-text);
+}
+
+.app-tab-bar {
+  --background: var(--app-tab-bg);
+  --border: 0;
+  box-shadow: var(--app-tab-shadow);
+}
+
+.app-tab-bar ion-tab-button {
+  --color: var(--app-tab-color);
+  --color-selected: var(--app-tab-color-selected);
+}
+
+/* =============================================================================
+   Shared page layout
+   ============================================================================= */
+.page-content,
+.home-content {
+  --background: var(--app-bg);
+}
+
+.page-wrap,
+.home-scroll {
+  padding: 12px 16px 24px;
+  max-width: var(--app-content-max);
+  margin: 0 auto;
+}
+
+.home-scroll {
+  padding-top: 8px;
+}
+
+.page-wrap h1,
+.home-welcome h1 {
+  margin: 4px 0;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--app-text);
+}
+
+.home-welcome h1 {
+  margin: 8px 0 4px;
+}
+
+.page-wrap p,
+.home-welcome p {
+  margin: 0 0 16px;
+  color: var(--app-text-secondary);
+  font-size: 0.9rem;
+}
+
+.page-wrap .muted {
+  color: var(--app-text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.page-wrap--narrow {
+  max-width: var(--app-auth-max);
+}
+
+/* =============================================================================
+   Home sections / actions
+   ============================================================================= */
+.home-section {
+  margin-bottom: 16px;
+}
+
+.card-section {
+  background: var(--app-surface);
+  border-radius: var(--app-radius-card);
+  padding: 14px 14px 16px;
+  box-shadow: var(--app-card-shadow);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+.section-link {
+  font-size: 0.85rem;
+}
+
+.section-empty {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: var(--app-text-secondary);
+}
+
+.action-grid {
+  padding: 0;
+}
+
+.action-tile {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.85;
+}
+
+.action-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--app-radius-tile);
+  background: var(--app-primary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-icon-wrap ion-icon {
+  font-size: 1.35rem;
+  color: var(--ion-color-primary);
+}
+
+.action-label {
+  font-size: 0.7rem;
+  color: var(--app-text-muted);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.update-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.update-chip {
+  border: 0;
+  background: var(--app-surface-muted);
+  border-radius: 999px;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--app-text-muted);
+}
+
+.update-chip ion-icon {
+  font-size: 1rem;
+  color: var(--ion-color-primary);
+}
+
+/* =============================================================================
+   List placeholders (community, etc.)
+   ============================================================================= */
+.placeholder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.placeholder-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 0;
+  background: var(--app-surface);
+  border-radius: var(--app-radius-row);
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 0.95rem;
+  color: var(--app-text);
+  box-shadow: var(--app-card-shadow);
+}
+
+.placeholder-row ion-icon {
+  font-size: 1.25rem;
+  color: var(--ion-color-primary);
 }

@@ -1,0 +1,28 @@
+<app-header
+  [flatLabel]="flatLabel"
+  [subtitle]="societyName"
+  (profileClick)="openProfile()"
+></app-header>
+
+<ion-content class="page-content">
+  <div class="page-wrap page-wrap--narrow">
+    <ion-text>
+      <h1>Profile</h1>
+      @if (fullName) {
+        <p>{{ fullName }}</p>
+      }
+      @if (role) {
+        <p class="muted">Role: {{ role }}</p>
+      }
+      <p class="muted">Settings and personal details — later.</p>
+    </ion-text>
+
+    <ion-button expand="block" fill="outline" [disabled]="loggingOut()" (click)="logout()">
+      @if (loggingOut()) {
+        <ion-spinner name="crescent"></ion-spinner>
+      } @else {
+        Sign out
+      }
+    </ion-button>
+  </div>
+</ion-content>

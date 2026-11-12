@@ -1,0 +1,16 @@
+<ion-header class="app-header">
+  <ion-toolbar>
+    <div class="header-left" slot="start">
+      <p class="flat-label">{{ flatLabel() }}</p>
+      @if (subtitle()) {
+        <p class="header-sub">{{ subtitle() }}</p>
+      }
+    </div>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" aria-label="Profile" (click)="profileClick.emit()">
+        <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

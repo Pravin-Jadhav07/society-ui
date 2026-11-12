@@ -1,18 +1,63 @@
-<ion-content class="ion-padding">
-  <ion-text>
-    <h1>Welcome to {{ societyName }}</h1>
-    @if (fullName) {
-      <p>Hi, {{ fullName }}</p>
-    }
-    @if (role) {
-      <p>Role: {{ role }}</p>
-    }
-  </ion-text>
-  <ion-button expand="block" fill="outline" [disabled]="loggingOut()" (click)="logout()">
-    @if (loggingOut()) {
-      <ion-spinner name="crescent"></ion-spinner>
-    } @else {
-      Sign out
-    }
-  </ion-button>
+<app-header
+  [flatLabel]="flatLabel"
+  [subtitle]="societyName"
+  (profileClick)="openProfile()"
+></app-header>
+
+<ion-content class="home-content">
+  <div class="home-scroll">
+    <section class="home-welcome">
+      <ion-text>
+        <h1>Welcome{{ fullName ? ', ' + fullName : '' }}</h1>
+        <p>Your society home — more coming soon.</p>
+      </ion-text>
+    </section>
+
+    <section class="home-section">
+      <div class="section-head">
+        <h2>Quick actions</h2>
+      </div>
+      <ion-grid class="action-grid">
+        <ion-row>
+          @for (action of quickActions; track action.label) {
+            <ion-col size="3">
+              <button type="button" class="action-tile" disabled>
+                <span class="action-icon-wrap">
+                  <ion-icon [name]="action.icon"></ion-icon>
+                </span>
+                <span class="action-label">{{ action.label }}</span>
+              </button>
+            </ion-col>
+          }
+        </ion-row>
+      </ion-grid>
+    </section>
+
+    <section class="home-section card-section">
+      <div class="section-head">
+        <h2>Updates</h2>
+        <span class="section-link">View all</span>
+      </div>
+      <p class="section-empty">You have no new updates</p>
+      <div class="update-row">
+        @for (item of updates; track item.label) {
+          <button type="button" class="update-chip" disabled>
+            <ion-icon [name]="item.icon"></ion-icon>
+            <span>{{ item.label }}</span>
+          </button>
+        }
+      </div>
+    </section>
+
+    <section class="home-section card-section">
+      <div class="section-head">
+        <h2>Community posts</h2>
+        <ion-button size="small" fill="outline" disabled>
+          <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+          New post
+        </ion-button>
+      </div>
+      <p class="section-empty">No posts yet. Structure only — coming soon.</p>
+    </section>
+  </div>
 </ion-content>

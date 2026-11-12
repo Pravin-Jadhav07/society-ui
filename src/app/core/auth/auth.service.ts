@@ -9,6 +9,8 @@ export type LoginResponse = {
   role: string;
   fullName?: string;
   societyName?: string;
+  wing?: string;
+  flatNumber?: string;
 };
 
 export type ApiMessageResponse = {
@@ -29,6 +31,8 @@ export class AuthService {
   private readonly roleKey = 'role';
   private readonly fullNameKey = 'fullName';
   private readonly societyNameKey = 'societyName';
+  private readonly wingKey = 'wing';
+  private readonly flatNumberKey = 'flatNumber';
 
   private refreshRequest$: Observable<TokenPair> | null = null;
 
@@ -129,6 +133,30 @@ export class AuthService {
     return localStorage.getItem(this.societyNameKey) ?? 'Society';
   }
 
+  getWing(): string {
+    return localStorage.getItem(this.wingKey) ?? '';
+  }
+
+  getFlatNumber(): string {
+    return localStorage.getItem(this.flatNumberKey) ?? '';
+  }
+
+  /** Header left: "A · 101" from login wing + flatNumber */
+  getFlatLabel(): string {
+    const wing = this.getWing().trim();
+    const flat = this.getFlatNumber().trim();
+    if (wing && flat) {
+      return `${wing} · ${flat}`;
+    }
+    if (wing) {
+      return wing;
+    }
+    if (flat) {
+      return flat;
+    }
+    return '—';
+  }
+
   /** Login role from backend, e.g. User | Admin */
   getRole(): string {
     return localStorage.getItem(this.roleKey) ?? '';
@@ -160,6 +188,8 @@ export class AuthService {
     localStorage.removeItem(this.roleKey);
     localStorage.removeItem(this.fullNameKey);
     localStorage.removeItem(this.societyNameKey);
+    localStorage.removeItem(this.wingKey);
+    localStorage.removeItem(this.flatNumberKey);
   }
 
   errorMessage(error: unknown, fallback = 'Something went wrong'): string {
@@ -199,6 +229,12 @@ export class AuthService {
     }
     if (res.societyName) {
       localStorage.setItem(this.societyNameKey, res.societyName);
+    }
+    if (res.wing) {
+      localStorage.setItem(this.wingKey, res.wing);
+    }
+    if (res.flatNumber) {
+      localStorage.setItem(this.flatNumberKey, res.flatNumber);
     }
   }
 

@@ -81,6 +81,18 @@ body {
   --highlight-color-invalid: #5f6368;
 }
 
+.forgot-link {
+  margin: 0 0 1rem;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.forgot-link a {
+  color: var(--ion-color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
 .register-hint {
   margin-top: 1.5rem;
   text-align: center;

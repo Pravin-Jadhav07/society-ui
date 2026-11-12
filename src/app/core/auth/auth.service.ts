@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, of, shareReplay, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -9,6 +9,11 @@ export type LoginResponse = {
   role: string;
   fullName?: string;
   societyName?: string;
+};
+
+export type ApiMessageResponse = {
+  success?: boolean;
+  message?: string;
 };
 
 type TokenPair = {
@@ -50,6 +55,25 @@ export class AuthService {
     return this.http.post<{ message?: string }>(
       `${environment.apiUrl}/auth/register`,
       body,
+    );
+  }
+
+  forgotPassword(email: string) {
+    return this.http.post<ApiMessageResponse>(
+      `${environment.apiUrl}/auth/forgot-password`,
+      { email },
+    );
+  }
+
+  /** Backend expects query params: token, newPassword */
+  resetPassword(token: string, newPassword: string) {
+    const params = new HttpParams()
+      .set('token', token)
+      .set('newPassword', newPassword);
+    return this.http.post<ApiMessageResponse>(
+      `${environment.apiUrl}/auth/reset-password`,
+      null,
+      { params },
     );
   }
 

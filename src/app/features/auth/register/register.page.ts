@@ -134,13 +134,11 @@ export class RegisterPage implements OnInit {
     this.formTick.update((n) => n + 1);
 
     if (this.form.invalid) {
-      this.error.set('Please fill all required fields');
       return;
     }
 
     const value = this.form.getRawValue();
     if (value.societyId == null || value.residentType === '') {
-      this.error.set('Please fill all required fields');
       return;
     }
 

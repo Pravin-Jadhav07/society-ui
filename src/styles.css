@@ -69,6 +69,16 @@ body {
   display: block;
   padding: 0.25rem 1rem 0.75rem;
   font-size: 0.8rem;
+  color: var(--ion-color-danger);
+}
+
+/*
+  Ionic paints stacked labels red when invalid.
+  Keep labels normal; only .field-error / ion-note stays red.
+*/
+.login-list ion-input,
+.login-list ion-select {
+  --highlight-color-invalid: #5f6368;
 }
 
 .register-hint {

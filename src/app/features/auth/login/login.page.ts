@@ -92,6 +92,7 @@ export class LoginPage {
     this.submitted.set(true);
     this.error.set('');
     this.form.markAllAsTouched();
+    this.formTick.update((n) => n + 1);
 
     if (this.form.invalid) {
       return;

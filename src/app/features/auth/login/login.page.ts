@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   IonButton,
   IonContent,
@@ -18,6 +18,7 @@ import { AuthService } from '../../../core/auth/auth.service';
   templateUrl: './login.page.html',
   imports: [
     ReactiveFormsModule,
+    RouterLink,
     IonContent,
     IonList,
     IonItem,
@@ -106,7 +107,7 @@ export class LoginPage {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(this.auth.errorMessage(err));
+        this.error.set(this.auth.errorMessage(err, 'Unable to login'));
       },
     });
   }

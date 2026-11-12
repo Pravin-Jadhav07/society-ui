@@ -77,3 +77,21 @@ body {
   color: #5f6368;
   font-size: 0.95rem;
 }
+
+.register-hint a {
+  color: var(--ion-color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-wrap {
+  padding-top: 2.5rem;
+  padding-bottom: 3rem;
+}
+
+.success {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-align: center;
+}

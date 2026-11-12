@@ -3,5 +3,11 @@
     <h1>Home</h1>
     <p>Login worked. More screens later.</p>
   </ion-text>
-  <ion-button expand="block" fill="outline" (click)="logout()">Sign out</ion-button>
+  <ion-button expand="block" fill="outline" [disabled]="loggingOut()" (click)="logout()">
+    @if (loggingOut()) {
+      <ion-spinner name="crescent"></ion-spinner>
+    } @else {
+      Sign out
+    }
+  </ion-button>
 </ion-content>

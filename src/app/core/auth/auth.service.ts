@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { Observable, catchError, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export type LoginResponse = {
@@ -31,8 +31,45 @@ export class AuthService {
       );
   }
 
+  register(body: {
+    username: string;
+    email: string;
+    password: string;
+    fullName: string;
+    wing: string;
+    flatNumber: string;
+    residentType: 'OWNER' | 'TENANT';
+    societyId: number;
+    mobileNumber?: string;
+  }) {
+    return this.http.post<{ message?: string }>(
+      `${environment.apiUrl}/auth/register`,
+      body,
+    );
+  }
+
   isLoggedIn(): boolean {
     return !!localStorage.getItem(this.tokenKey);
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.refreshKey);
+  }
+
+  /** Calls backend to revoke refresh token, then always clears local session. */
+  logout(): Observable<unknown> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.clearSession();
+      return of(null);
+    }
+
+    return this.http
+      .post(`${environment.apiUrl}/auth/logout`, { refreshToken })
+      .pipe(
+        catchError(() => of(null)),
+        tap(() => this.clearSession()),
+      );
   }
 
   clearSession(): void {
@@ -41,7 +78,7 @@ export class AuthService {
     localStorage.removeItem(this.roleKey);
   }
 
-  errorMessage(error: unknown): string {
+  errorMessage(error: unknown, fallback = 'Something went wrong'): string {
     if (error instanceof HttpErrorResponse) {
       const body = error.error;
       if (typeof body === 'string' && body.trim()) {
@@ -67,6 +104,6 @@ export class AuthService {
         return 'Your account is disabled. Please wait for admin approval.';
       }
     }
-    return 'Unable to login';
+    return fallback;
   }
 }
